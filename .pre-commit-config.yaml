@@ -1,0 +1,20 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        files: \.(yaml|yml)$
+      - id: trailing-whitespace
+        files: ^(projects/.*/wiki/.*|[^/]+)\.md$
+      - id: end-of-file-fixer
+        files: ^(projects/.*/wiki/.*|[^/]+)\.md$
+
+  - repo: local
+    hooks:
+      - id: reefiki-frontmatter
+        name: Validate REEFIKI wiki frontmatter
+        entry: python scripts/validate_frontmatter.py
+        language: python
+        files: ^projects/.*/wiki/.*\.md$
+        pass_filenames: true
+        always_run: false

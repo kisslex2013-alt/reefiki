@@ -1,0 +1,6 @@
+# One project folder name per line. These projects are removed from public snapshots.
+Hermes
+reefiki
+metrica
+security-guidance-lite
+Suno
