@@ -1,0 +1,72 @@
+{
+  "collapse-filter": true,
+  "search": "-path:\"projects/_template/\" -path:\"/raw/\" -path:\"/inbox/\" -path:\"/seen/\" -path:\"/deep-research/\" -path:\"/.claude/\" -path:\"/.agents/\" -path:\"/.codex/\" -path:\"/.windsurf/\" -path:\"/.pytest_cache/\" -path:\"/plans/\" -file:CLAUDE -file:_domain -file:README",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": false,
+  "collapse-color-groups": true,
+  "colorGroups": [
+    {
+      "query": "path:\"/wiki/sources/\"",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "path:\"/wiki/decisions/\"",
+      "color": {
+        "a": 1,
+        "rgb": 15010571
+      }
+    },
+    {
+      "query": "path:\"/wiki/skills/\"",
+      "color": {
+        "a": 1,
+        "rgb": 11657298
+      }
+    },
+    {
+      "query": "path:\"/wiki/synthesis/\"",
+      "color": {
+        "a": 1,
+        "rgb": 5408992
+      }
+    },
+    {
+      "query": "path:\"/wiki/concepts/\"",
+      "color": {
+        "a": 1,
+        "rgb": 16746564
+      }
+    },
+    {
+      "query": "path:\"/wiki/entities/\"",
+      "color": {
+        "a": 1,
+        "rgb": 5431473
+      }
+    },
+    {
+      "query": "path:\"/wiki/logs/\" OR path:\"/wiki/log.md\" OR path:\"/wiki/index.md\" OR path:\"/wiki/_schema.md\" OR path:\"/wiki/_dashboard.md\"",
+      "color": {
+        "a": 1,
+        "rgb": 5419488
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 0.916666666666667,
+  "lineSizeMultiplier": 1.06979166666667,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.3242333202184636,
+  "close": true
+}

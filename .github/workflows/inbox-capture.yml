@@ -1,0 +1,78 @@
+name: Inbox Capture
+
+on:
+  repository_dispatch:
+    types: [inbox-capture]
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # All client_payload values are passed via env vars — never interpolated
+      # directly into run: strings to prevent command injection.
+      - name: Validate payload
+        env:
+          CAPTURE_PROJECT: ${{ github.event.client_payload.project }}
+          CAPTURE_URL: ${{ github.event.client_payload.url }}
+        run: |
+          if [ -z "$CAPTURE_PROJECT" ] || [ -z "$CAPTURE_URL" ]; then
+            echo "ERROR: 'project' and 'url' are required in client_payload"
+            exit 1
+          fi
+          # Allowlist check: project must be an existing directory
+          if [ ! -d "projects/$CAPTURE_PROJECT" ]; then
+            echo "ERROR: project '$CAPTURE_PROJECT' does not exist"
+            exit 1
+          fi
+          # Reject path traversal attempts
+          case "$CAPTURE_PROJECT" in
+            *..* | */* | *\\*)
+              echo "ERROR: invalid project name '$CAPTURE_PROJECT'"
+              exit 1
+              ;;
+          esac
+
+      - name: Create inbox file
+        env:
+          CAPTURE_PROJECT: ${{ github.event.client_payload.project }}
+          CAPTURE_URL: ${{ github.event.client_payload.url }}
+          CAPTURE_NOTE: ${{ github.event.client_payload.note }}
+        run: |
+          PROJECT="$CAPTURE_PROJECT"
+          URL="$CAPTURE_URL"
+          NOTE="$CAPTURE_NOTE"
+          TIMESTAMP=$(date -u +"%Y%m%d-%H%M%S")
+          SLUG=$(echo "$URL" | sed 's|https\?://||' | sed 's|[^a-zA-Z0-9]|-|g' | tr '[:upper:]' '[:lower:]' | cut -c1-50 | sed 's/-*$//')
+          FILE="projects/${PROJECT}/inbox/${TIMESTAMP}-${SLUG}.md"
+
+          mkdir -p "projects/${PROJECT}/inbox"
+
+          {
+            echo "$URL"
+            if [ -n "$NOTE" ]; then
+              echo ""
+              echo "$NOTE"
+            fi
+          } > "$FILE"
+
+          echo "Created: $FILE"
+          cat "$FILE"
+
+      - name: Commit and push
+        env:
+          CAPTURE_PROJECT: ${{ github.event.client_payload.project }}
+          CAPTURE_URL: ${{ github.event.client_payload.url }}
+        run: |
+          git config user.name "REEFIKI Capture Bot"
+          git config user.email "reefiki-bot@users.noreply.github.com"
+          git add projects/*/inbox/*.md
+          git diff --cached --quiet && echo "Nothing to commit" && exit 0
+          # Commit message uses env vars — safe from injection
+          SAFE_URL="${CAPTURE_URL:0:60}"
+          git commit -m "capture: ${CAPTURE_PROJECT}/inbox — ${SAFE_URL}"
+          git push

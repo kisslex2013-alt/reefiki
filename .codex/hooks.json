@@ -1,0 +1,18 @@
+{
+  "description": "REEFIKI staged-path safety guard before broad staging, commit, push, or publish apply",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|exec_command|functions.exec_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/staged_scope_hook.py",
+            "timeout": 8,
+            "statusMessage": "Checking staged path scope"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "outcome": "pass",
+  "reason": null,
+  "error_code": null,
+  "dry_run": true,
+  "branch": "codex/publish-path-dry-run",
+  "head": "9d382b4",
+  "base": "origin/main",
+  "base_is_ancestor": true,
+  "private_remote": "origin",
+  "public_remote": "public",
+  "private_projects": [
+    "Hermes",
+    "Instagram",
+    "reefiki",
+    "metrica",
+    "mimo",
+    "Security Guidance",
+    "security-guidance-lite",
+    "Suno"
+  ],
+  "real_projects": [
+    "Hermes",
+    "Instagram",
+    "Security Guidance",
+    "Suno",
+    "metrica",
+    "mimo",
+    "reefiki"
+  ],
+  "public_snapshot_exclusions": [],
+  "changed_paths": [
+    "ROADMAP.md",
+    "TASKS.md",
+    "docs/link-confidence/link-confidence-reefiki-2026-06-14.md",
+    "docs/retrieval/qmd-benchmark-2026-06-14.md",
+    "scripts/reefiki.py",
+    "scripts/reefiki_core/adapter_smoke.py",
+    "scripts/reefiki_core/link_confidence.py",
+    "scripts/reefiki_core/retrieval_benchmark.py",
+    "scripts/reefiki_core/retrieval_preflight.py",
+    "site/README.md",
+    "site/index.html",
+    "site/script.js",
+    "site/styles.css",
+    "tests/test_reefiki_core_adapter_smoke.py",
+    "tests/test_reefiki_core_link_confidence.py",
+    "tests/test_reefiki_core_retrieval_benchmark.py",
+    "tests/test_reefiki_core_retrieval_preflight.py"
+  ],
+  "diff_class": "public-safe",
+  "actions": [
+    "push_task_branch",
+    "push_private_main",
+    "push_public_snapshot"
+  ],
+  "post_merge_actions": [
+    "cleanup_task_worktree",
+    "cleanup_task_branch"
+  ],
+  "public_snapshot_requested": false,
+  "public_snapshot_intent": "diff-class:public-safe",
+  "snapshot_origin": "dry-run-inspect"
+}

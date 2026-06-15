@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REEFIKI Ops Dashboard v2</title>
+  <link rel="stylesheet" href="/static/theme.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__title">
+      <h1>REEFIKI Workspace</h1>
+      <p class="subtitle" data-i18n="subtitle">Local read-only overview</p>
+    </div>
+    <div class="kpi" id="kpi"></div>
+    <div class="topbar__controls">
+      <label class="control">
+        <span data-i18n="language">Language</span>
+        <select id="lang">
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+        </select>
+      </label>
+      <label class="control">
+        <span data-i18n="theme">Theme</span>
+        <select id="theme">
+          <option value="dark" data-i18n="dark">Dark</option>
+          <option value="light" data-i18n="light">Light</option>
+        </select>
+      </label>
+      <label class="control">
+        <span data-i18n="auto">Auto</span>
+        <select id="interval">
+          <option value="0" data-i18n="off">Off</option>
+          <option value="30000" data-i18n="s30">30s</option>
+          <option value="120000" data-i18n="m2">2m</option>
+        </select>
+      </label>
+      <button id="refresh" type="button" data-i18n="refresh">Refresh</button>
+      <span id="last-refresh" class="last-refresh"></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="control-plane">
+      <div class="card control-plane__reefiki" id="reefiki-control"></div>
+      <div class="card control-plane__work" id="current-work"></div>
+    </section>
+
+    <section class="work-surface">
+      <div class="work-surface__main">
+        <div class="card" id="activity">
+          <div class="card__head">
+            <h2 data-i18n="activity">Activity</h2>
+            <span class="muted" id="activity-count"></span>
+          </div>
+          <ul class="activity-list" id="activity-list"></ul>
+        </div>
+
+        <div class="card" id="projects">
+          <div class="card__head">
+            <h2 data-i18n="projects">Projects</h2>
+            <span class="muted" id="projects-count"></span>
+          </div>
+          <table class="projects-table">
+            <thead>
+              <tr>
+                <th data-i18n="col-name">Name</th>
+                <th data-i18n="col-branch">Branch</th>
+                <th data-i18n="col-state">State</th>
+                <th data-i18n="col-ahead-behind">±</th>
+                <th data-i18n="col-last">Last activity</th>
+                <th data-i18n="col-mapping">REEFIKI</th>
+              </tr>
+            </thead>
+            <tbody id="projects-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside class="card inspector" id="inspector">
+        <div class="card__head">
+          <h2 data-i18n="inspector">Inspector</h2>
+          <button class="ghost" id="inspector-close" type="button" data-i18n="close" hidden>×</button>
+        </div>
+        <div class="inspector__body" id="inspector-body">
+          <p class="muted" data-i18n="empty">Select a project to inspect.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- ============ TEMPLATES (cloneNode + textContent, no innerHTML for data) ============ -->
+
+  <template id="tpl-kpi-cell">
+    <div class="kpi__cell">
+      <span class="kpi__label" data-field="label"></span>
+      <strong class="kpi__value" data-field="value"></strong>
+    </div>
+  </template>
+
+  <template id="tpl-reefiki">
+    <h2 data-i18n="reefiki">REEFIKI</h2>
+    <dl class="kv">
+      <dt data-i18n="phase">Phase</dt><dd data-field="phase">—</dd>
+      <dt data-i18n="sprint">Sprint</dt><dd data-field="sprint">—</dd>
+      <dt data-i18n="active-task">Active task</dt><dd data-field="active-task">—</dd>
+      <dt data-i18n="next-task">Next task</dt><dd data-field="next-task">—</dd>
+      <dt data-i18n="health">Health</dt><dd data-field="health">—</dd>
+      <dt data-i18n="t111">T-111</dt><dd data-field="t111">—</dd>
+      <dt data-i18n="last-log">Last log</dt><dd data-field="last-log">—</dd>
+    </dl>
+  </template>
+
+  <template id="tpl-work-card">
+    <article class="work-card" tabindex="0" role="button">
+      <div class="work-card__head">
+        <strong data-field="name"></strong>
+        <span class="badge" data-field="state"></span>
+      </div>
+      <div class="work-card__meta">
+        <code data-field="branch"></code>
+        <span class="muted" data-field="ago"></span>
+      </div>
+      <p class="work-card__detail muted" data-field="detail"></p>
+    </article>
+  </template>
+
+  <template id="tpl-activity-item">
+    <li class="activity-item" tabindex="0" role="button">
+      <span class="activity-item__kind" data-field="kind"></span>
+      <div class="activity-item__body">
+        <div class="activity-item__title" data-field="title"></div>
+        <div class="activity-item__meta muted">
+          <span data-field="project"></span>
+          <span data-field="ago"></span>
+        </div>
+      </div>
+    </li>
+  </template>
+
+  <template id="tpl-project-row">
+    <tr tabindex="0" role="button">
+      <td data-field="name"></td>
+      <td><code data-field="branch"></code></td>
+      <td data-field="state"></td>
+      <td data-field="ahead-behind"></td>
+      <td data-field="ago"></td>
+      <td data-field="mapping"></td>
+    </tr>
+  </template>
+
+  <template id="tpl-detail-kv">
+    <div class="kv-row">
+      <span class="kv-row__label" data-field="label"></span>
+      <span class="kv-row__value" data-field="value"></span>
+    </div>
+  </template>
+
+  <template id="tpl-log-entry">
+    <li class="log-entry">
+      <span class="log-entry__heading" data-field="heading"></span>
+      <span class="muted" data-field="body"></span>
+    </li>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
